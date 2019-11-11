@@ -1,0 +1,342 @@
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css?family=Teko:700&display=swap" rel="stylesheet">
+<style>
+body {
+  margin: 0;
+  font-family: Menlo, monaco, courier;
+  font-size: 12px;
+}
+.container {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding-top: 50px;
+}
+textarea {
+  outline: none;
+  border: none;
+  background: rgba(0,0,0,0.05);
+  font-family: Menlo, monaco;
+  font-size: 12px;
+  padding: 10px;
+  resize: none;
+  width: 100%;
+}
+h1,h2 {
+  font-family: 'Teko', sans-serif;
+  margin: 0;
+}
+header {
+  background: rgba(0,0,0,0.8);
+  text-align: center;
+}
+header h1 {
+  padding: 5px;
+  color: white;
+}
+header h1 a {
+  text-decoration: none;
+  color: white;
+}
+hr {
+  width: 100%;
+  margin: 20px 0;
+  border: 1px rgba(0,0,0,0.05) solid;
+}
+.video-responsive{
+  margin: 10px 0;
+  overflow:hidden;
+  padding-bottom:56.25%;
+  position:relative;
+  height:0;
+}
+.video-responsive iframe{
+  left:0;
+  top:0;
+  height:100%;
+  width:100%;
+  position:absolute;
+}
+footer {
+  padding: 50px;
+  text-align: center;
+  background: rgba(0,0,0,0.8);
+}
+footer a {
+  text-decoration: none;
+  color: rgba(255,255,255,0.9);
+  padding: 10px;
+}
+table {
+  font-family: Menlo, monaco, courier;
+  font-size: 12px;
+}
+td{
+  border:1px solid rgba(0,0,0,0.2);
+  padding: 5px;
+}
+.flex {
+  display: flex;
+}
+</style>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  var docs = document.querySelectorAll(".protocol")
+  docs.forEach((doc) => {
+    doc.style.height = "";
+    doc.style.height = doc.scrollHeight + "px"
+  })
+})
+</script>
+</head>
+<body>
+<header>
+<h1><a href="/">bitkey</a></h1>
+</header>
+<div class='container'>
+  <h1>1. What</h1>
+  <div>bitkey is a global bitcoin user database, stored on bitcoin.</div>
+  <br>
+  <div>bitkey lets you register paymail public keys on the blockchain, which then can be used by any bitcoin apps, simply by running their own Bitkey <a href='https://neon.planaria.network'>Planaria</a>.</div>
+  <hr>
+  <h1>2. Background</h1>
+  <div>Every paymail account can have many public keys.</div>
+  <br>
+  <div>This means, whenever we post a signed message to the blockchain, we need to attach <b>both the Paymail address AND its public key</b> (watch the video below to learn more).</div>
+  <br>
+  <div class='video-responsive'>
+  <iframe width="100%" src="https://www.youtube.com/embed/lZzyfhRtoLA" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  </div>
+  <hr>
+  <h1>3. Problem</h1>
+  <div>Let's think about a simple signed message posting app.</div>
+  <br>
+  <textarea class='protocol'>OP_0
+OP_RETURN
+[Bitcom Address]
+[Paymail]
+[Public Key]
+[Message]
+[Signature]</textarea>
+  <br>
+  <br>
+  <div>Here's an example:</div>
+  <br>
+  <textarea class='protocol'>OP_0
+OP_RETURN
+19HxigV4QyBv3tHpQVcUEQyq1pzZVdoAut
+644@moneybutton.com
+03836714653ab7b17569be03eaf6593d59116700a226a3c812cc1f3b3c8f1cbd6c
+First Message
+H+g5cgN6ILgrtoxSpt25ogVkOMuC6irp8Il7e5SGVrrkC2xZMIdCNwt8TPjbIG9ZTBDrVQujT0CeRWINpXXTRHU=</textarea>
+  <br>
+  <br>
+  <div>This is equivalent to a database INSERT command into a table that looks like this:</div>
+  <br>
+  <table>
+    <tr>
+      <td>Paymail</td>
+      <td>Public Key</td>
+      <td>Message</td>
+      <td>Signature</td>
+    </tr>
+    <tr>
+      <td>644@moneybutton.com</td>
+      <td>	
+03836714653ab7b17569be03eaf6593d59116700a226a3c812cc1f3b3c8f1cbd6c</td>
+      <td>First Message</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td>644@moneybutton.com</td>
+      <td>	
+03836714653ab7b17569be03eaf6593d59116700a226a3c812cc1f3b3c8f1cbd6c</td>
+      <td>Second Message</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td>644@moneybutton.com</td>
+      <td>	
+03836714653ab7b17569be03eaf6593d59116700a226a3c812cc1f3b3c8f1cbd6c</td>
+      <td>Third Message</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td>644@moneybutton.com</td>
+      <td>	
+03836714653ab7b17569be03eaf6593d59116700a226a3c812cc1f3b3c8f1cbd6c</td>
+      <td>Fourth Message</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td>644@moneybutton.com</td>
+      <td>	
+03836714653ab7b17569be03eaf6593d59116700a226a3c812cc1f3b3c8f1cbd6c</td>
+      <td>Fifth Message</td>
+      <td>...</td>
+    </tr>
+  </table>
+  <br>
+  <br>
+  <div><h2>WHAT IS THE PROBLEM?</h2></div>
+  <div>Every message contains the <b>SAME "Paymail" AND "Public Key"</b> fields EVERTYTIME.</div>
+  <br>
+  <div>This is redundant.</div>
+  <br>
+  <hr>
+  <h1>4. Solution</h1>
+  <br>
+  <div>What if we separate above monolithic table into TWO tables?</div>
+  <br>
+  <div>There are two ways to separate them out.</div>
+  <br>
+  <br>
+  <h2>Solution 1. Save space</h2>
+  <br>
+  <div>First we create a dedicated "User" table:</div>
+  <br>
+  <table>
+    <tr>
+      <td>Paymail</td>
+      <td>Public Key</td>
+    </tr>
+    <tr>
+      <td>644@moneybutton.com</td>
+      <td>	
+03836714653ab7b17569be03eaf6593d59116700a226a3c812cc1f3b3c8f1cbd6c</td>
+    </tr>
+  </table>
+  <br>
+  <div>Then we only need to include the paymail address to the message table:</div>
+  <br>
+  <table>
+    <tr>
+      <td>Paymail</td>
+      <td>Message</td>
+      <td>Signature</td>
+    </tr>
+    <tr>
+      <td>644@moneybutton.com</td>
+      <td>First Message</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td>644@moneybutton.com</td>
+      <td>Second Message</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td>644@moneybutton.com</td>
+      <td>Third Message</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td>644@moneybutton.com</td>
+      <td>Fourth Message</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td>644@moneybutton.com</td>
+      <td>Fifth Message</td>
+      <td>...</td>
+    </tr>
+  </table>
+  <br>
+  <div>This makes the application protocol much leaner because it doesn't have to use the redundant public key every time.</div>
+  <br>
+  <br>
+  <h2>Solution 2. Separate paymail from messages</h2>
+  <br>
+  <div>In some cases you may NOT want to include paymail addresses in your messages. In this case you can split out the table in the following manner:</div>
+  <br>
+  <div>First, the "User" table is the same:</div>
+  <br>
+  <table>
+    <tr>
+      <td>Paymail</td>
+      <td>Public Key</td>
+    </tr>
+    <tr>
+      <td>644@moneybutton.com</td>
+      <td>	
+03836714653ab7b17569be03eaf6593d59116700a226a3c812cc1f3b3c8f1cbd6c</td>
+    </tr>
+  </table>
+  <br>
+  <div>But this time, we include the <b>Public Key</b> instead of the Paymail addresses:</div>
+  <br>
+  <table>
+    <tr>
+      <td>Pubkey</td>
+      <td>Message</td>
+      <td>Signature</td>
+    </tr>
+    <tr>
+      <td>03836714653ab7b17569be03eaf6593d59116700a226a3c812cc1f3b3c8f1cbd6c</td>
+      <td>First Message</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td>03836714653ab7b17569be03eaf6593d59116700a226a3c812cc1f3b3c8f1cbd6c</td>
+      <td>Second Message</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td>03836714653ab7b17569be03eaf6593d59116700a226a3c812cc1f3b3c8f1cbd6c</td>
+      <td>Third Message</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td>03836714653ab7b17569be03eaf6593d59116700a226a3c812cc1f3b3c8f1cbd6c</td>
+      <td>Fourth Message</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <td>03836714653ab7b17569be03eaf6593d59116700a226a3c812cc1f3b3c8f1cbd6c</td>
+      <td>Fifth Message</td>
+      <td>...</td>
+    </tr>
+  </table>
+  <br>
+  <br>
+  <div>Note that the "User" table is the same in both cases, and can be used for both cases.</div>
+  <br>
+  <div>bitkey is this "User" table, stored on the blockchain.</div>
+  <hr>
+  <h1>5. Protocol</h1>
+  <div>bitkey uses the following protocol to register an on-chain link between a paymail address and its public key</div>
+  <br>
+  <textarea class='protocol'>OP_0
+OP_RETURN
+13SrNDkVzY5bHBRKNu5iXTQ7K7VqTh5tJC
+sig(sha256(hex(paymail(USER))|hex(pubkey(USER))), privkey(13SrNDkVzY5bHBRKNu5iXTQ7K7VqTh5tJC))
+sig(sha256(hex(paymail(USER))|hex(pubkey(USER))), privkey(USER))
+<paymail>
+<pubkey></textarea>
+  <br>
+  <ol>
+  <li><b>OP_0:</b> Starts with OP_0 for safety</li>
+  <li><b>OP_RETURN:</b> Bitkey is an OP_RETURN protocol</li>
+  <li><b>13SrNDkVzY5bHBRKNu5iXTQ7K7VqTh5tJC:</b> Bitcom address for Bitkey</li>
+  <li><b>Bitkey Signature:</b> Signature generated by the Bitkey server to prove authenticity</li>
+  <li><b>User Signature:</b> Signature generated by user wallet to prove user registration</li>
+  <li><b>Paymail:</b> The paymail address to register</li>
+  <li><b>Pubkey:</b> The public key tied to the paymail address</li>
+  </ol>
+  <br>
+  <div>To verify authenticity of a bitkey transaction, BOTH of the following must succeed:</div>
+  <br>
+  <ol>
+    <li>Verify Bitkey Signature against Bitkey's Bitcom address <code>13SrNDkVzY5bHBRKNu5iXTQ7K7VqTh5tJC</code></li>
+    <li>Verify User signature against the user pubkey</li>
+  </ol>
+  <hr>
+</div>
+<footer>
+  <a href='https://twitter.com/_unwriter'>Twitter</a>
+  <a href='https://bitdb.network/atlantis'>Slack</a>
+</footer>
+</body>
+</html>

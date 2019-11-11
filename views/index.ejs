@@ -1,0 +1,111 @@
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+  margin: 0;
+  color: rgba(0,0,0,0.8);
+  font-family: arial;
+}
+.container {
+  display: flex;
+  flex-direction: column;
+}
+.container textarea {
+  border: none;
+  outline: none;
+  height: 200px;
+  font-family: Menlo, monaco;
+  font-size: 12px;
+  padding: 10px;
+}
+textarea {
+  background: rgba(0,0,0,0.8);
+  color: white;
+}
+.btn {
+  width: 140px !important;
+  margin: 0 auto;
+  padding: 50px;
+}
+.container {
+  position: relative;
+  top: 30%;
+  text-align: center;
+}
+h1 {
+  font-family: 'Teko', sans-serif;
+  margin: 0;
+}
+.hidden {
+  display: none;
+}
+form {
+  max-width: 600px;
+  width: 90%;
+  margin: 0 auto;
+  display: flex;
+}
+input[type=text] {
+  border: 1px solid rgba(0,0,0,0.1);
+  padding: 10px;
+  font-size: 16px;
+  text-transform: lowercase;
+  font-family: arial;
+  font-weight: bold;
+  outline: none;
+  flex-grow: 1;
+  margin: 0;
+}
+input[type=submit] {
+  margin: 0;
+  display: block;
+  padding: 15px;
+  background: rgba(0,0,0,0.8);
+  color: white;;
+  border:0 none;
+  font-size: 14px;
+  font-weight: bold;
+  cursor:pointer;
+  -webkit-border-radius: 0px;
+  border-radius: 0px;
+  outline: none;
+}
+.subtitle {
+  font-size: 14px;
+  padding: 10px 0;
+  margin-bottom: 20px;
+}
+a.small {
+  color: silver;
+  font-size: 12px;
+  font-family: Menlo, monaco;
+}
+</style>
+<link href="https://fonts.googleapis.com/css?family=Teko:700&display=swap" rel="stylesheet">
+<script src="https://www.moneybutton.com/moneybutton.js"></script>
+<script type="text/javascript" src="./bsv.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", (e) => {
+  document.querySelector("form").addEventListener("submit", (e) => {
+    let val = e.target.querySelector("[name=paymail]").value;
+    if (!/.*@moneybutton\.com/.test(val)) {
+      alert("bitkey currently only supports Moneybutton. Other providers coming soon!") 
+    }
+  })
+})
+</script>
+</head>
+<body>
+<div class='container'>
+  <h1>bitme</h1>
+  <div class='subtitle'>register yourself on the blockchain</div>
+  <form method="post" action="/user">
+    <input type="text" placeholder="Paymail or public key" name="paymail">
+    <input type="submit" value="search">
+  </form>
+  <br>
+  <a class='small' href='/how'>How it works</a>
+</div>
+</body>
+</html>

@@ -1,0 +1,323 @@
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+  margin: 0;
+}
+.container {
+  display: flex;
+  flex-direction: column;
+}
+#id textarea {
+  width: 100%;
+}
+textarea {
+  outline: none;
+  border: none;
+  background: rgba(0,0,0,0.05);
+  font-family: Menlo, monaco;
+  font-size: 12px;
+  padding: 10px;
+  resize: none;
+}
+.btn {
+  width: 140px !important;
+  margin: 0 auto;
+  padding: 50px;
+}
+.container {
+  position: relative;
+  text-align: center;
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+}
+h1 {
+  font-family: 'Teko', sans-serif;
+}
+h5 {
+  font-family: 'Teko', sans-serif;
+}
+h6 {
+  margin: 10px 0;
+  font-size: 12px;
+  font-weight: normal;
+  text-align: left;
+  font-family: Menlo, monaco, Courier;
+}
+.hidden {
+  display: none;
+}
+.doc {
+  text-align: left;
+  width: 100%;
+  box-sizing: border-box;
+  border: none;
+  background: rgba(0,0,0,0.05);
+  padding: 10px;
+  margin: 0 auto;
+}
+.button {
+  display: block;
+  width: 100%;
+  padding: 15px;
+  background: rgba(0,0,0,0.8);
+  color: white;;
+  border:0 none;
+  font-size: 14px;
+  font-weight: bold;
+  margin-top: 10px;
+  cursor:pointer;
+  -webkit-border-radius: 0px;
+  border-radius: 0px;
+  outline: none;
+}
+header {
+  background: rgba(0,0,0,0.8);
+  text-align: center;
+}
+header h1 {
+  padding: 5px;
+  color: white;
+}
+header h1 a {
+  text-decoration: none;
+  color: white;
+}
+#finish {
+  border-top: 1px solid whitesmoke;
+}
+.info a {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-all;
+  color: rgba(0,0,0,0.8);
+}
+.info {
+  background: whitesmoke;
+}
+.info h1 {
+  margin: 0;
+  text-align: left;
+}
+#finish a#learnmore {
+  color: rgba(0,0,0,0.8) !important;
+  font-size: 12px;
+}
+hr {
+  margin: 10px;
+  border: 1px rgba(0,0,0,0.05) solid;
+}
+#log {
+  text-align: left;
+}
+#log h1 {
+  font-size: 20px;
+}
+#log .items {
+  font-family: Menlo, monaco, Courier;
+  font-size: 12px;
+}
+table {
+  border-collapse: collapse;
+  border-color: rgba(0,0,0,0.1);
+}
+td, th {
+  padding: 5px;
+  border-color: rgba(0,0,0,0.1);
+}
+.box {
+  background: rgba(0,0,0,0.05);
+  padding: 20px;
+}
+.box h1 {
+  text-align: left;
+  margin: 0;
+}
+#post .tx {
+  width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  -ms-word-break: break-all;
+  word-break: break-word;
+  font-family: Menlo, monaco, Courier;
+  font-size: 12px;
+}
+#post .tx td, #post .tx th {
+  border: 1px solid rgba(0,0,0,0.1);
+  width: 50%;
+}
+</style>
+<link href="https://fonts.googleapis.com/css?family=Teko:700&display=swap" rel="stylesheet">
+<script src="https://www.moneybutton.com/moneybutton.js"></script>
+<script type="text/javascript" src="/bsv.min.js"></script>
+<script>
+var post = (paymail, pubkey) => {
+  var div = document.querySelector("#sign .btn")
+  moneyButton.render(div, {
+    label: 'sign',
+    successMessage: 'authenticated',
+    /*
+    outputs: [
+      {
+        amount: '0',
+        currency: 'BSV',
+        script: bsv.Script.buildSafeDataOut([content, '#{mySignature}', '#{myPublicKey}', '#{myPaymail}']).toASM()
+      }
+    ],
+    */
+    cryptoOperations: [
+      {
+        name: 'mySignature',
+        method: 'sign',
+        data: pubkey,
+        dataEncoding: 'utf8',
+      }
+    ],
+    onCryptoOperations: (p) => {
+      let sig = p[0].value;
+      document.querySelector("#finish").classList.remove("hidden")
+      document.querySelector("#finish .button").addEventListener("click", (e) => {
+        document.querySelector("#finish").classList.add("hidden")
+        document.querySelector("#post").classList.remove("hidden")
+        document.querySelector("#post .tx").innerHTML = `
+<tr>
+  <th>Data</th>
+  <th>explanation</th>
+</tr>
+<tr>
+  <td>OP_0</td>
+  <td></td>
+</tr>
+<tr>
+  <td>OP_RETURN</td>
+  <td></td>
+</tr>
+<tr>
+  <td>13SrNDkVzY5bHBRKNu5iXTQ7K7VqTh5tJC</td>
+  <td>Bitkey Bitcom Address</td>
+</tr>
+<tr>
+  <td><%=sig%></td>
+  <td>Bitkey Bitcom signature</td>
+</tr>
+<tr>
+  <td>${sig}</td>
+  <td>Your signature</td>
+</tr>
+<tr>
+  <td><%=paymail%></td>
+  <td>Paymail address to register</td>
+</tr>
+<tr>
+  <td><%=pubkey%></td>
+  <td>Public key to register</td>
+</tr>`
+        return false;
+      })
+      document.querySelector("#post .button").addEventListener("click", (e) => {
+        alert("Register not yet implemented")
+      })
+      document.querySelector("#sign").classList.add("hidden")
+      console.log("pubkey = ", pubkey)
+      console.log("signed =", p[0].value)
+      console.log(bsv.Message)
+      let pk = bsv.PublicKey.fromHex(pubkey)
+      console.log("pk = ", pk)
+      let address = pk.toAddress();
+      console.log("address = ", address)
+      var verify = bsv.Message.verify(pubkey, address, p[0].value)
+      console.log("verify = ", verify)
+
+    //onPayment: (payment) => {
+    /*
+      let cryptoOperations = payment.cryptoOperations
+      console.log(`User signature for their content is ${cryptoOperations[0].value},
+        the public key used is ${cryptoOperations[1].value}
+        the paymail of the user is ${cryptoOperations[2].value},
+        and everything was broadcasted in the tx: ${payment.txid}`)
+        */
+    }
+  })
+}
+document.addEventListener("DOMContentLoaded", () => {
+  post("<%=paymail%>", "<%=pubkey%>")
+  document.querySelector("#auth .button").addEventListener("click", (e) => {
+    document.querySelector("#sign").classList.remove("hidden")
+    document.querySelector("#auth").classList.add('hidden')
+  })
+})
+</script>
+</head>
+<body>
+<header>
+<h1><a href="/">bitme</a></h1>
+</header>
+<div class='container'>
+  <div id='id'>
+    <h1 class='paymail'><%=paymail%></h1>
+    <!--
+    <textarea readonly class='pubkey'><%=pubkey%></textarea>
+    -->
+  </div>
+  <div id='auth'>
+    <h6>Register your identity to bitcoin if this is you.</h6>
+    <button class='button'>Start</button>
+  </div>
+  <div id='sign' class='box hidden'>
+    <h1>Step 1. Authenticate</h1>
+    <div class='btn'></div>
+    <h6>Swipe the button to authenticate.</h6>
+    <h6>No coin will be sent for this action.</h6>
+    <h6>Only the owner of this paymail can authenticate.</h6>
+  </div>
+  <div id='finish' class='box hidden'>
+    <h1>Step 2. Sign</h1>
+    <div class='info'>
+      <h6>You are:</h6>
+      <table border="1">
+        <tr>
+          <td width="50%">
+            <h6>Paymail</h6>
+          </td>
+          <td width="50%">
+            <h6>Pubkey</h6>
+          </td>
+        </tr>
+        <tr>
+          <td width="50%">
+            <h6><a href="/paymail/<%=paymail%>"><%=paymail%></a></h6>
+          </td>
+          <td width="50%">
+            <h6><a href="/pubkey/<%=pubkey%>"><%=pubkey%></a></h6>
+          </td>
+        </tr>
+      </table>
+      <br>
+      <h6>Now let's sign the Paymail and the public key <a href="/how" target="_blank">Learn more</a></h6>
+      <br>
+      <hr>
+      <textarea readonly class='doc hidden'></textarea>
+      <pre class='script'></pre>
+      <button class='button'>Next</button>
+    </div>
+  </div>
+  <div id='post' class='box hidden'>
+    <h1>Step 3. Register</h1>
+    <div class='info'>
+      <h6>The following transaction output will be sent to the blockchain to register your Paymail <a target="_blank" href='/how'>(learn more)</a>:</h6>
+      <table class='tx'></table>
+      <hr>
+      <button class='button'>Register</button>
+      <!--<a target="_blank" class="share" href="https://twitter.com/intent/tweet?text=Hello%20world">Tweet</a>-->
+    </div>
+  </div>
+  <hr>
+  <div id='log'>
+    <h1>registered keys</h1>
+    <div class='items'>not registered yet</div>
+  </div>
+</div>
+</body>
+</html>
