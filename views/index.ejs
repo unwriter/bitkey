@@ -28,10 +28,23 @@ textarea {
   margin: 0 auto;
   padding: 50px;
 }
+.button {
+  border-radius: 2px;
+}
+header {
+  background: rgba(0,0,0,0.8);
+  color: white;
+  text-align: center;
+  padding: 20px;
+}
 .container {
   position: relative;
-  top: 30%;
   text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
 }
 h1 {
   font-family: 'Teko', sans-serif;
@@ -43,7 +56,7 @@ h1 {
 form {
   max-width: 600px;
   width: 90%;
-  margin: 0 auto;
+  margin: 20px auto 0;
   display: flex;
 }
 input[type=text] {
@@ -74,17 +87,59 @@ input[type=submit] {
 .subtitle {
   font-size: 14px;
   padding: 10px 0;
-  margin-bottom: 20px;
 }
 a.small {
   color: silver;
-  font-size: 12px;
+  font-size: 11px;
+  text-decoration: none;
+  background: rgba(0,0,0,0.3);
+  width: 50px;
   font-family: Menlo, monaco;
+  margin: 10px 0 0;
+  padding: 10px;
+  display: inline-block;
+}
+table.rows {
+  max-width: 600px;
+  width: 100%;
+  margin: 0 auto;
+  background: rgba(0,0,0,0.03);
+}
+td {
+  border: 1px solid rgba(0,0,0,0.06);
+  padding: 5px;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  -ms-word-break: break-all;
+  word-break: break-word;
+  font-family: Menlo, monaco, Courier;
+  font-size: 12px;
+}
+td.left {
+  width: 40%;
+}
+td.right {
+  width: 60%;
+}
+td a {
+  color: rgba(0,0,0,0.5);
+}
+th {
+  min-width: 100px;
+  font-family: Menlo, monaco, Courier;
+  font-size: 12px;
+  padding: 10px;
+  text-align: left;
+}
+h6 {
+  font-family: 'Teko', sans-serif;
+  font-size: 20px;
+  margin: 40px 0 0;
+  text-align: left;
 }
 </style>
 <link href="https://fonts.googleapis.com/css?family=Teko:700&display=swap" rel="stylesheet">
 <script src="https://www.moneybutton.com/moneybutton.js"></script>
-<script type="text/javascript" src="./bsv.min.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", (e) => {
   document.querySelector("form").addEventListener("submit", (e) => {
@@ -93,19 +148,56 @@ document.addEventListener("DOMContentLoaded", (e) => {
       alert("bitkey currently only supports Moneybutton. Other providers coming soon!") 
     }
   })
+  let query = {
+    "v": 3,
+    "q": {
+      "find": {
+        "out.s2": "13SrNDkVzY5bHBRKNu5iXTQ7K7VqTh5tJC"
+      },
+      project: {
+        "out.$": 1, "blk": 1
+      },
+      "limit": 100
+    }
+  }
+  var b64 = btoa(JSON.stringify(query));
+  var url = "https://genesis.bitdb.network/q/1FnauZ9aUH2Bex6JzdcV4eNX7oLSSEbxtN/" + b64;
+  var header = {
+    headers: { key: "1KJPjd3p8khnWZTkjhDYnywLB2yE1w5BmU" }
+  };
+  fetch(url, header).then(function(r) {
+    return r.json()
+  }).then(function(r) {
+    let items = (r.u ? r.u : [])
+    items = items.concat(r.c)
+    let rows = items.map((item) => {
+      return "<tr><td class='left'>" + 
+        "<a href='/paymail/" + item.out[0].s5 + "'>" + 
+        item.out[0].s5 + "</a></td><td class='right'>" + item.out[0].s6 + "</td><td>" + (item.blk ? "block " + item.blk.i : "mempool") + "</td></tr>"
+    })
+    console.log("items = ", rows)
+    document.querySelector(".rows").innerHTML = "<tr><th>Paymail</th><th>Public Key</th><th>when</th></tr>" + rows.join("");
+  })
 })
 </script>
 </head>
 <body>
-<div class='container'>
-  <h1>bitme</h1>
+<header>
+  <h1>bitkey</h1>
   <div class='subtitle'>register yourself on the blockchain</div>
+  <a class='small' href='/how'>about</a>
+  <a class='small' href='https://genesis.bitdb.network/query/1FnauZ9aUH2Bex6JzdcV4eNX7oLSSEbxtN/eyJ2IjozLCJxIjp7ImZpbmQiOnsib3V0LnMyIjoiMTNTck5Ea1Z6WTViSEJSS051NWlYVFE3SzdWcVRoNXRKQyJ9LCJwcm9qZWN0Ijp7Im91dC4kIjoxfSwibGltaXQiOjEwMH19'>API</a>
+  <a class='small' href='https://twitter.com/_unwriter'>twitter</a>
   <form method="post" action="/user">
-    <input type="text" placeholder="Paymail or public key" name="paymail">
+    <input type="text" placeholder="search paymail" name="paymail">
     <input type="submit" value="search">
   </form>
   <br>
-  <a class='small' href='/how'>How it works</a>
+</header>
+<div class='container'>
+  <h6>new users</h6>
+  <table class='rows'>
+  </table>
 </div>
 </body>
 </html>

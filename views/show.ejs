@@ -9,9 +9,21 @@ body {
   display: flex;
   flex-direction: column;
 }
+#id {
+  padding: 50px;
+}
+#id h1 {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-all;
+}
 #id textarea {
   width: 100%;
 }
+#auth {
+  padding: 10px;
+}
+
 textarea {
   outline: none;
   border: none;
@@ -22,8 +34,10 @@ textarea {
   resize: none;
 }
 .btn {
-  width: 140px !important;
+/*
+  width: 160px !important;
   margin: 0 auto;
+  */
   padding: 50px;
 }
 .container {
@@ -46,6 +60,9 @@ h6 {
   text-align: left;
   font-family: Menlo, monaco, Courier;
 }
+h6 a {
+  color: rgba(0,0,0,0.8);
+}
 .hidden {
   display: none;
 }
@@ -59,6 +76,7 @@ h6 {
   margin: 0 auto;
 }
 .button {
+  border-radius: 2px;
   display: block;
   width: 100%;
   padding: 15px;
@@ -69,8 +87,8 @@ h6 {
   font-weight: bold;
   margin-top: 10px;
   cursor:pointer;
-  -webkit-border-radius: 0px;
-  border-radius: 0px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
   outline: none;
 }
 header {
@@ -111,6 +129,12 @@ hr {
 }
 #log {
   text-align: left;
+  padding: 10px;
+  box-sizing: border-box;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  -ms-word-break: break-all;
+  word-break: break-word;
 }
 #log h1 {
   font-size: 20px;
@@ -135,6 +159,15 @@ td, th {
   text-align: left;
   margin: 0;
 }
+#log table {
+  width: 100%;
+}
+#log td {
+  border: 1px solid rgba(0,0,0,0.1);
+}
+#log a {
+  color: rgba(0,0,0,0.5);
+}
 #post .tx {
   width: 100%;
   overflow-wrap: break-word;
@@ -151,22 +184,14 @@ td, th {
 </style>
 <link href="https://fonts.googleapis.com/css?family=Teko:700&display=swap" rel="stylesheet">
 <script src="https://www.moneybutton.com/moneybutton.js"></script>
-<script type="text/javascript" src="/bsv.min.js"></script>
+<script type="text/javascript" src="https://unpkg.com/bsv@0.30.0/bsv.min.js"></script>
+<script type="text/javascript" src="https://unpkg.com/bsv@0.30.0/bsv-message.min.js"></script>
 <script>
 var post = (paymail, pubkey) => {
   var div = document.querySelector("#sign .btn")
   moneyButton.render(div, {
-    label: 'sign',
+    label: 'authenticate',
     successMessage: 'authenticated',
-    /*
-    outputs: [
-      {
-        amount: '0',
-        currency: 'BSV',
-        script: bsv.Script.buildSafeDataOut([content, '#{mySignature}', '#{myPublicKey}', '#{myPaymail}']).toASM()
-      }
-    ],
-    */
     cryptoOperations: [
       {
         name: 'mySignature',
@@ -177,6 +202,17 @@ var post = (paymail, pubkey) => {
     ],
     onCryptoOperations: (p) => {
       let sig = p[0].value;
+      console.log("p = ", p)
+
+      let pk = bsv.PublicKey.fromHex(pubkey)
+      let address = pk.toAddress();
+      var verify = bsv.Message.verify(pubkey, address, sig)
+      if (!verify) {
+        alert("Incorrect user. Please authenticate from the correct user page.")
+        return false; 
+      }
+      console.log("verify = ", verify)
+
       document.querySelector("#finish").classList.remove("hidden")
       document.querySelector("#finish .button").addEventListener("click", (e) => {
         document.querySelector("#finish").classList.add("hidden")
@@ -216,28 +252,39 @@ var post = (paymail, pubkey) => {
 </tr>`
         return false;
       })
+      /*
       document.querySelector("#post .button").addEventListener("click", (e) => {
         alert("Register not yet implemented")
       })
+      */
       document.querySelector("#sign").classList.add("hidden")
-      console.log("pubkey = ", pubkey)
-      console.log("signed =", p[0].value)
-      console.log(bsv.Message)
-      let pk = bsv.PublicKey.fromHex(pubkey)
-      console.log("pk = ", pk)
-      let address = pk.toAddress();
-      console.log("address = ", address)
-      var verify = bsv.Message.verify(pubkey, address, p[0].value)
-      console.log("verify = ", verify)
-
-    //onPayment: (payment) => {
-    /*
-      let cryptoOperations = payment.cryptoOperations
-      console.log(`User signature for their content is ${cryptoOperations[0].value},
-        the public key used is ${cryptoOperations[1].value}
-        the paymail of the user is ${cryptoOperations[2].value},
-        and everything was broadcasted in the tx: ${payment.txid}`)
-        */
+      let items = [
+        "13SrNDkVzY5bHBRKNu5iXTQ7K7VqTh5tJC",
+        "<%=sig%>",
+        `${sig}`,
+        "<%=paymail%>",
+        "<%=pubkey%>"
+      ]
+      console.log("Items = ", items)
+      let asm = bsv.Script.buildSafeDataOut(items).toASM()
+      console.log("asm = ", asm)
+      moneyButton.render(document.querySelector("#post .btn"), {
+        label: 'Register',
+        successMessage: 'Registered',
+        outputs: [
+          {
+            amount: '0',
+            currency: 'BSV',
+            script: asm
+          }
+        ],
+        onPayment: (payment) => {
+          console.log("Payment = ", payment)
+          setTimeout(() => {
+            window.location.reload(false); 
+          }, 2000)
+        }
+      })
     }
   })
 }
@@ -247,12 +294,44 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelector("#sign").classList.remove("hidden")
     document.querySelector("#auth").classList.add('hidden')
   })
+  let query = {
+    "v": 3,
+    "q": {
+      "find": {
+        "out.s2": "13SrNDkVzY5bHBRKNu5iXTQ7K7VqTh5tJC",
+        "out.s5": "<%=paymail%>"
+      },
+      project: {
+        "out.$": 1, "blk": 1, "tx.h": 1
+      },
+      "limit": 100
+    }
+  }
+  var b64 = btoa(JSON.stringify(query));
+  var url = "https://genesis.bitdb.network/q/1FnauZ9aUH2Bex6JzdcV4eNX7oLSSEbxtN/" + b64;
+  var header = {
+    headers: { key: "1KJPjd3p8khnWZTkjhDYnywLB2yE1w5BmU" }
+  };
+  fetch(url, header).then(function(r) {
+    return r.json()
+  }).then(function(r) {
+    let items = (r.u ? r.u : [])
+    items = items.concat(r.c)
+    if (items.length > 0) {
+      document.querySelector("#log").classList.remove("hidden");
+      let rows = items.map((item) => {
+        return "<tr><td>" + item.out[0].s6 + "</td><td>" + (item.blk ? "block " + item.blk.i : "mempool") +  "</td><td><a href='https://whatsonchain.com/tx/" + item.tx.h + "'>tx</a></td></tr>"
+      })
+      console.log("items = ", rows)
+      document.querySelector("#log .items").innerHTML = rows;
+    }
+  })
 })
 </script>
 </head>
 <body>
 <header>
-<h1><a href="/">bitme</a></h1>
+<h1><a href="/">bitkey</a></h1>
 </header>
 <div class='container'>
   <div id='id'>
@@ -262,7 +341,7 @@ document.addEventListener("DOMContentLoaded", () => {
     -->
   </div>
   <div id='auth'>
-    <h6>Register your identity to bitcoin if this is you.</h6>
+    <h6>Register your identity to bitcoin if this is you. <a href='/how'>how does this work?</a></h6>
     <button class='button'>Start</button>
   </div>
   <div id='sign' class='box hidden'>
@@ -309,14 +388,15 @@ document.addEventListener("DOMContentLoaded", () => {
       <h6>The following transaction output will be sent to the blockchain to register your Paymail <a target="_blank" href='/how'>(learn more)</a>:</h6>
       <table class='tx'></table>
       <hr>
-      <button class='button'>Register</button>
+      <!--<button class='button'>Register</button>-->
+      <div class='btn'></div>
       <!--<a target="_blank" class="share" href="https://twitter.com/intent/tweet?text=Hello%20world">Tweet</a>-->
     </div>
   </div>
   <hr>
-  <div id='log'>
+  <div id='log' class='hidden'>
     <h1>registered keys</h1>
-    <div class='items'>not registered yet</div>
+    <table class='items'></table>
   </div>
 </div>
 </body>
